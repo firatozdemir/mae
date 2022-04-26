@@ -81,7 +81,8 @@ def train_one_epoch(model: torch.nn.Module,
                 pred = model.unpatchify(pred.detach())
                 y = torchvision.utils.make_grid(pred[:num_samples], nrow=3, normalize=True)
                 mask = mask.detach()
-                mask = mask.unsqueeze(-1).repeat(1, 1, model.patch_embed.patch_size[0]**2 *3)  # (N, H*W, p*p*3)
+                in_channels = samples.shape[1]
+                mask = mask.unsqueeze(-1).repeat(1, 1, model.patch_embed.patch_size[0]**2 *in_channels)  # (N, H*W, p*p*in_channels)
                 mask = model.unpatchify(mask)  # 1 is removing, 0 is keeping
                 x_masked = samples[:num_samples] * (1 - mask[:num_samples])
                 x_masked = torchvision.utils.make_grid(x_masked, nrow=3, normalize=True)
